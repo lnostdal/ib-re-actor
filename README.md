@@ -1,6 +1,6 @@
 # ib-re-actor
 
-A clojure friendly wrapper around the Interactive Brokers java API.
+A Clojure friendly wrapper around the Interactive Brokers Java API.
 
 ## Usage
 
