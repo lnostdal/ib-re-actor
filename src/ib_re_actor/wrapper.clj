@@ -196,14 +196,14 @@
 
     ;;; Orders
     (orderStatus [this orderId status filled remaining avgFillPrice permId
-                  parentId lastFillPrice clientId whyHeld]
+                  parentId lastFillPrice clientId whyHeld mktCapPrice]
       (dispatch-message cb {:type :order-status :order-id orderId
                             :value {:status (translate :from-ib :order-status status)
                                     :filled filled :remaining remaining
                                     :average-fill-price avgFillPrice
                                     :permanent-id permId :parent-id parentId
                                     :last-fill-price lastFillPrice :client-id clientId
-                                    :why-held whyHeld}}))
+                                    :why-held whyHeld :mkt-cap-price mktCapPrice}}))
 
     (openOrder [this orderId contract order orderState]
       (dispatch-message cb {:type :open-order :order-id orderId
@@ -347,15 +347,16 @@
                             :value xml}))
 
     ;;; Historical Data
-    (historicalData [this requestId date open high low close volume count wap hasGaps]
-      (if (is-finish? date)
-        (dispatch-message cb {:type :price-bar-complete :request-id requestId})
-        (dispatch-message cb
-                          {:type :price-bar :request-id requestId
-                           :value {:time (translate :from-ib :timestamp date)
-                                   :open open :close close
-                                   :high high :low low  :volume volume
-                                   :trade-count count :WAP wap :has-gaps? hasGaps}})))
+    (historicalData [this requestId bar] ;;date open high low close volume count wap hasGaps]
+      (dispatch-message cb {:type :price-bar :request-id requestId
+                            :value {:time (translate :from-ib :timestamp (.time bar))
+                                    :open (.open bar) :close (.close bar)
+                                    :high (.high bar) :low (.low bar) :volume (.volume bar)
+                                    :trade-count (.count bar) :WAP (.wap bar) :has-gaps? (.hasGaps bar)}}))
+
+    (historicalDataEnd [this reqId startDateStr endDateStr]
+      (dispatch-message cb {:type :price-bar-complete :request-id reqId}))
+
 
     ;;; Market Scanners
     (scannerParameters [this xml]

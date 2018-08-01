@@ -33,7 +33,7 @@
    client-id identifies this client. Only one connection to a gateway can
    be made per client-id at a time."
   ([wr host port client-id]
-   (let [ecs (com.ib.client.EClientSocket. wr)]
+   (let [ecs (com.ib.client.EClientSocket. wr (com.ib.client.EJavaSignal.))]
      (.eConnect ecs host port client-id)
      ecs)))
 
